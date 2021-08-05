@@ -146,6 +146,7 @@ alias nc='npm-check'
 ################################################################################
 
 alias y='yarn'
+alias yadts='yarn add typescript @types/node @types/react @types/react-dom @types/jest'
 alias yt='y && y test'
 alias ytw='y && yarn test --watch'
 alias yw='y && yarn watch'
