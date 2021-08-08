@@ -64,6 +64,7 @@ function gbDm() {
 ################################################################################
 
 alias cdr='cd $(git rev-parse --show-toplevel)'
+alias dfh='df -h'
 alias freem='free -m'
 alias gh='history | grep'
 alias left='ls -t -1'
