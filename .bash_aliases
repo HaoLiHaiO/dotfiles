@@ -64,6 +64,7 @@ function gbDm() {
 ################################################################################
 
 alias cdr='cd $(git rev-parse --show-toplevel)'
+alias gh='history | grep'
 alias sbr='source ~/.bashrc'
 
 function completeAlias() {
