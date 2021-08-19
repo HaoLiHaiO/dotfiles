@@ -68,6 +68,7 @@ alias dfh='df -h'
 alias freem='free -m'
 alias gh='history | grep'
 alias left='ls -t -1'
+alias pulsealsareload ='pulseaudio -k && sudo alsa force-reload'
 alias sbr='source ~/.bashrc'
 
 function completeAlias() {
