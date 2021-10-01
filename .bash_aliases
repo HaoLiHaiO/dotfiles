@@ -64,6 +64,7 @@ function gbDm() {
 ################################################################################
 
 alias cdr='cd $(git rev-parse --show-toplevel)'
+alias changelang='setxkbmap -layout de,ch,us -option grp:alt_shift_toggle'
 alias dfh='df -h'
 alias freem='free -m'
 alias gh='history | grep'
