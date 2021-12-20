@@ -197,3 +197,12 @@ alias iex='iex --erl "-kernel shell_history enabled"'
 # code
 ################################################################################
 alias co='code $(git rev-parse --show-toplevel)'
+
+################################################################################
+# Weather
+################################################################################
+
+alias dandongwetter='curl wttr.in/Dandong'
+alias daqingwetter='curl wttr.in/Daqing'
+alias hkwetter='curl wttr.in/Hongkong'
+alias varnawetter='curl wttr.in/Varna'
