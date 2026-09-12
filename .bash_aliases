@@ -111,7 +111,7 @@ alias ....='cd ../../..'
 
 alias dfh='df -h'
 alias freem='free -h'
-alias gh='history | grep'
+alias hgrep='history | grep'
 alias left='ls -t -1'
 alias sbr='source ~/.bashrc'
 
