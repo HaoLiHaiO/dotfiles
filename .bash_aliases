@@ -1,5 +1,5 @@
 ################################################################################
-# git
+# Git
 ################################################################################
 
 alias ga='git add'
@@ -7,175 +7,199 @@ alias gaa='git add -A'
 alias gba='git branch --all'
 alias gbd='git branch -d'
 alias gbD='git branch -D'
-alias gbn='git checkout -b'
-alias gca='git-cz --amend'
-alias gcan='git-cz --amend --no-edit'
-alias gcann='git commit --amend --no-edit --no-verify'
-alias gcl='git clone'
+
+alias gc='git commit'
 alias gcm='git commit -m'
+alias gca='git commit --amend'
+alias gcan='git commit --amend --no-edit'
+alias gcann='git commit --amend --no-edit --no-verify'
+
+alias gcl='git clone'
 alias gco='git checkout'
-alias gc='git-cz'
-alias gcr='git-cz --retry'
+alias gsw='git switch'
+alias gswc='git switch -c'
+
 alias gd='git diff'
 alias gdc='git diff --cached'
-alias gfa='git fetch --all'
+
+alias gf='git fetch'
+alias gfa='git fetch --all --prune'
+
 alias gl='git log --branches --remotes --tags --graph --oneline --decorate'
+alias gs='git status --short --branch'
+
 alias gp='git push'
-alias gpf='git push -f'
+alias gpf='git push --force-with-lease'
 alias gpsuo='git push --set-upstream origin'
+
 alias gpu='git pull'
 alias gpuff='git pull --ff-only'
 alias gpur='git pull --rebase --autostash'
-alias gpurm='git fetch --all && git pull --rebase --autostash origin master'
-alias gpurmi='git fetch --all && git rebase --interactive --autostash origin/master'
-alias gmm='git fetch --all && git merge origin/master'
+
 alias gr='git rebase --autostash'
 alias gri='git rebase --interactive'
 alias gra='git rebase --abort'
 alias grc='git rebase --continue'
 alias grs='git rebase --skip'
+
 alias greh='git reset --hard'
-alias gri='git rebase --interactive'
-alias grsh='git reset --hard'
-alias gs='git status'
-alias gstl='git stash list'
+
 alias gst='git stash'
+alias gstl='git stash list'
 alias gsts='git stash show'
 alias gstp='git stash pop'
 alias gstpi='git stash pop --index'
 alias gsta='git stash apply'
+
 alias gcp='git cherry-pick'
 alias gcpc='git cherry-pick --continue'
 alias gcpa='git cherry-pick --abort'
 
 function gln() {
-  n=${1:-1}
-  git log "-$n"
+    local n="${1:-1}"
+    git log "-$n"
 }
 
-function gbDm() {
-  for branch in $(gba | grep $1 | grep -v origin) ; do
-    gbD $branch;
-  done
+# Detect origin's default branch instead of assuming main/master.
+function gdefault() {
+    local branch
+
+    branch="$(git symbolic-ref --quiet --short refs/remotes/origin/HEAD 2>/dev/null)" || true
+
+    if [[ -n "$branch" ]]; then
+        printf '%s\n' "${branch#origin/}"
+        return
+    fi
+
+    if git show-ref --verify --quiet refs/remotes/origin/main; then
+        echo main
+    elif git show-ref --verify --quiet refs/remotes/origin/master; then
+        echo master
+    else
+        echo main
+    fi
+}
+
+function gpurm() {
+    local branch
+    branch="$(gdefault)" || return
+    git fetch --all --prune &&
+        git pull --rebase --autostash origin "$branch"
+}
+
+function gpurmi() {
+    local branch
+    branch="$(gdefault)" || return
+    git fetch --all --prune &&
+        git rebase --interactive --autostash "origin/$branch"
+}
+
+function gmm() {
+    local branch
+    branch="$(gdefault)" || return
+    git fetch --all --prune &&
+        git merge "origin/$branch"
 }
 
 ################################################################################
-# bash
+# Navigation / shell
 ################################################################################
 
-alias cdr='cd $(git rev-parse --show-toplevel)'
-alias changelang='setxkbmap -layout de,ch,us -option grp:alt_shift_toggle'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+
 alias dfh='df -h'
-alias freem='free -m'
+alias freem='free -h'
 alias gh='history | grep'
 alias left='ls -t -1'
-alias please='sudo !!'
-alias pulsealsareload ='pulseaudio -k && sudo alsa force-reload'
 alias sbr='source ~/.bashrc'
 
-function completeAlias() {
-  echo "complete -F _complete_alias ${1}" >> ~/.bash_completion
+alias ports='ss -tulpn'
+alias top='btop'
+
+function cdr() {
+    cd "$(git rev-parse --show-toplevel)" || return
+}
+
+function mkcd() {
+    mkdir -p "$1" && cd "$1"
+}
+
+# Manual fallback. XFCE itself handles Alt+Shift persistently.
+alias changelang='setxkbmap -layout ch,us -option grp:alt_shift_toggle'
+
+################################################################################
+# Search
+################################################################################
+
+alias rgi='rg --hidden --glob "!.git/*"'
+alias fdi='fd --hidden --exclude .git'
+
+function ff() {
+    fd --type f --hidden --exclude .git | fzf
 }
 
 ################################################################################
-# nvim
+# mise
 ################################################################################
 
-alias vimdiff='nvim -d'
+alias mi='mise'
+alias mil='mise list'
+alias mia='mise current'
+alias mii='mise install'
+alias miu='mise upgrade'
 
 ################################################################################
-# gradle
+# Codex
 ################################################################################
 
-function gw() {
-  DIR=$(pwd)
-  cd $(git rev-parse --show-toplevel)
-  ./gradlew "$@"
-  cd "$DIR"
+alias cx='codex'
+
+function codexroot() {
+    cdr && codex
 }
 
 ################################################################################
-# docker
+# VS Code
+################################################################################
+
+alias co='code "$(git rev-parse --show-toplevel)"'
+alias codehere='code .'
+
+################################################################################
+# Docker
 ################################################################################
 
 alias d='docker'
 alias dp='docker ps'
 alias dpa='docker ps -a'
 alias di='docker images'
+
+alias dc='docker compose'
+alias dcu='docker compose up -d'
+alias dcd='docker compose down'
+alias dcl='docker compose logs -f'
+
 alias dspa='docker system prune -a'
 alias dsa='docker stop $(docker ps -q)'
 alias dsta='docker start $(docker ps -qa)'
-alias dra='docker stop $(docker ps -q); docker rm $(docker ps -qa)'
-alias dei='docker exec -ti'
 
-################################################################################
-# docker-compose
-################################################################################
-
-alias dcu='docker-compose up -d'
-alias dcd='docker-compose down'
+function dei() {
+    docker exec -it "$@"
+}
 
 function dcuf() {
-  FILE=$1
-  shift
-  docker-compose -f $FILE up -d $@
+    local file="$1"
+    shift
+    docker compose -f "$file" up -d "$@"
 }
 
 function dcdf() {
-  FILE=$1
-  shift
-  docker-compose -f $FILE down $@
+    local file="$1"
+    shift
+    docker compose -f "$file" down "$@"
 }
-
-################################################################################
-# nvim
-################################################################################
-
-alias psh='pip show'
-
-################################################################################
-# yadm
-################################################################################
-
-alias yms='yadm status'
-alias yma='yadm add'
-alias ymp='yadm push'
-alias ymcm='yadm commit -m'
-alias ymc='yadm commit -m'
-alias ymd='yadm diff'
-alias ymdc='yadm diff --cached'
-
-function ymln() {
-  yadm log "-$1"
-}
-
-################################################################################
-# npm
-################################################################################
-
-alias nc='npm-check'
-
-################################################################################
-# python
-################################################################################
-
-alias psh='pip show'
-
-################################################################################
-# yarn
-################################################################################
-
-alias y='yarn'
-alias yadts='yarn add typescript @types/node @types/react @types/react-dom @types/jest'
-alias yt='y && y test'
-alias ytw='y && yarn test --watch'
-alias yw='y && yarn watch'
-alias ys='yarn && yarn start'
-alias ysb='y && yarn start-storybook'
-alias ytl='y && yarn test && yarn lint'
-alias yc='yarn-check'
-alias ycu='yarn-check -u'
-alias ycz='yarn commit'
 
 ################################################################################
 # tmux
@@ -188,15 +212,10 @@ alias tl='tmux ls'
 alias tk='tmux kill-session -t'
 
 ################################################################################
-# erlang / elixir
+# Python
 ################################################################################
 
-alias iex='iex --erl "-kernel shell_history enabled"'
-
-################################################################################
-# code
-################################################################################
-alias co='code $(git rev-parse --show-toplevel)'
+alias psh='pip show'
 
 ################################################################################
 # Weather
